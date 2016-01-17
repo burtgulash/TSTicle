@@ -79,10 +79,33 @@ class TernaryTrie:
         # increase size of the tree
         self.size += 1
 
+    def __str__(self):
+        s = []
+        def _str(n, acc, lvl, direction):
+            prepend = lvl * "  "
+            if n is None:
+                if direction == "-":
+                    s.append(prepend + "+ {"+acc+"}")
+                return
+
+            s.append(prepend + direction + " " + n.c)
+            _str(n.right, acc, lvl + 1, "/")
+            _str(n.mid, acc + n.c, lvl + 1, "-")
+            _str(n.left, acc, lvl + 1, "\\")
+
+
+        _str(self.root, "", 0, "-")
+
+        return "\n".join(s)
+
+
+
+
 
 if __name__ == "__main__":
     t = TernaryTrie()
-    words = "autobus", "auto", "a", "kokotko", "autobusak", "kkt", "kokot", "kk", "k"
+    words = "autobus", "auto", "a", "kokotko", "autobusak", #"kkt", "kokot", "kk", "k"
     for w in words:
         t.insert(w)
+        print(t)
         print(t.find(w), w)
