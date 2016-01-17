@@ -9,7 +9,8 @@ class TNode:
         self.mid = None
         self.right = None
 
-class TernaryTrie:
+
+class TST:
 
     def __init__(self):
         self.size = 0
@@ -19,10 +20,11 @@ class TernaryTrie:
         return self.size
 
     def find(self, word):
-        prev = cur = self.root
+        word += '\0'
+        cur = self.root
         i = 0
 
-        while i < len(word) and cur is not None:
+        while cur is not None:
             prev = cur
             if word[i] < cur.label:
                 cur = cur.left
@@ -31,13 +33,13 @@ class TernaryTrie:
             else:
                 if i == len(word) - 1:
                     return True
-
                 cur = cur.mid
                 i += 1
 
         return False
 
     def insert(self, word):
+        word += '\0'
         prev = cur = self.root
         i = 0
 
@@ -49,9 +51,7 @@ class TernaryTrie:
                 cur = cur.right
             else:
                 if i == len(word) - 1:
-                    # word present in trie
                     return
-
                 cur = cur.mid
                 i += 1
 
@@ -97,13 +97,17 @@ class TernaryTrie:
 
         _str(self.root, "", 0, "-")
 
-        return "\n".join(s)
+        return "\n".join(s).replace('\0', '$')
 
-class TSTicle:
+
+class CompressedTST:
 
     def __init__(self):
         self.size = 0
         self.root = None
+
+    def __len__(self):
+        return self.size
 
     def find(self, word):
         word += '\0'
@@ -129,7 +133,6 @@ class TSTicle:
                 i += 1
 
         return False
-
 
     def insert(self, word):
         word += '\0'
@@ -194,7 +197,6 @@ class TSTicle:
         # increase size of the tree
         self.size += 1
 
-
     def __str__(self):
         s = []
         def _str(n, acc, lvl, direction):
@@ -212,19 +214,22 @@ class TSTicle:
 
         _str(self.root, "", 0, "-")
 
-        return "\n".join(s)
-
-
-
-
+        return "\n".join(s).replace('\0', '$')
 
 
 
 if __name__ == "__main__":
-    t = TSTicle()
-    words = "autobus", "auto", "a", "kokotko", "autobusak", #"kkt", "kokot", "kk", "k"
+    #t = TST()
+    t = CompressedTST()
+
+    words = ["autobus", "auto", "a", "kokotko", "autobusak",
+            "kkt", "kokot", "kk", "k",
+            "karel", "kamil", "kure",
+            "kral", "kralovec", "karlovec", "kokorin", "karlstejn"]
+
     for w in words:
         t.insert(w)
-        print(t)
-        print(t.find(w), w)
-        print()
+        assert t.find(w)
+
+    print(t)
+    print()
