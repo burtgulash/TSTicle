@@ -25,7 +25,6 @@ class TST:
         i = 0
 
         while cur is not None:
-            prev = cur
             if word[i] < cur.label:
                 cur = cur.left
             elif word[i] > cur.label:
@@ -37,6 +36,30 @@ class TST:
                 i += 1
 
         return False
+
+    def descendants(self, prefix):
+        def _d(tnode, acc):
+            if acc and acc[-1] == '\0':
+                yield acc[:-1]
+            if tnode is None:
+                return
+            yield from _d(tnode.left, acc)
+            yield from _d(tnode.mid, acc + tnode.label)
+            yield from _d(tnode.right, acc)
+
+        cur = self.root
+        i = 0
+
+        while i < len(prefix) and cur is not None:
+            if prefix[i] < cur.label:
+                cur = cur.left
+            elif prefix[i] > cur.label:
+                cur = cur.right
+            else:
+                cur = cur.mid
+                if i == len(prefix) - 1:
+                    yield from _d(cur, prefix)
+                i += 1
 
     def insert(self, word):
         word += '\0'
@@ -134,6 +157,41 @@ class CompressedTST:
 
         return False
 
+    def descendants(self, prefix):
+        def _d(tnode, acc):
+            if acc and acc[-1] == '\0':
+                yield acc[:-1]
+            if tnode is None:
+                return
+            yield from _d(tnode.left, acc + tnode.label[:-1])
+            yield from _d(tnode.mid, acc + tnode.label)
+            yield from _d(tnode.right, acc + tnode.label[:-1])
+
+        cur = self.root
+        i = 0
+
+        while i < len(prefix) and cur is not None:
+            j = 0
+            while j < len(cur.label) - 1:
+                if i + j == len(prefix) - 1:
+                    yield from _d(cur, prefix[:i])
+                    return
+                if prefix[i + j] != cur.label[j]:
+                    return
+                j += 1
+
+            i += j
+            if prefix[i] < cur.label[j]:
+                cur = cur.left
+            elif prefix[i] > cur.label[j]:
+                cur = cur.right
+            else:
+                cur = cur.mid
+                if i == len(prefix) - 1:
+                    yield from _d(cur, prefix)
+                    return
+                i += 1
+
     def insert(self, word):
         word += '\0'
         prev = cur = self.root
@@ -230,6 +288,7 @@ if __name__ == "__main__":
     for w in words:
         t.insert(w)
         assert t.find(w)
+
 
     print(t)
     print()
