@@ -1,2 +1,3 @@
 *.swp
-pycache
+__pycache__
+*.pyc
