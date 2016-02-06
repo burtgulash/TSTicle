@@ -383,9 +383,7 @@ if __name__ == "__main__":
     print(t)
     print()
 
-    #t.remove("auto")
-    #t.remove("automaton")
-    #t.remove("autobus")
+    t.remove("auto")
 
     print(t)
     print()
