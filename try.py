@@ -11,19 +11,22 @@ if __name__ == "__main__":
             "karel", "kamil", "kure",
             "kral", "kralovec", "karlovec", "kokorin", "karlstejn"]
 
-    #words = ["autobus", "autor", "auto", "automat", "automaton", "authorka"]
-    words = ["auto", "automat", "automaton"]
-
+    print("INSERTING")
     for w in words:
         t.insert(w)
+        print("inserted", w)
         assert t.find(w)
 
 
 
     print(t)
-    print()
+    print("FULL SIZE:", len(t))
 
-    t.remove("auto")
+    for w in words:
+        t.remove(w)
+        print("removed", w)
+        #print(t)
+        print("SIZE:", len(t))
 
     print(t)
     print()

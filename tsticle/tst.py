@@ -30,11 +30,11 @@ class TST:
             if word[i] < cur.label:
                 prev = cur
                 cur = cur.left
-                turn = LEFT
+                prev_turn = turn = LEFT
             elif word[i] > cur.label:
                 prev = cur
                 cur = cur.right
-                turn = RIGHT
+                prev_turn = turn = RIGHT
             else:
                 if i == len(word) - 1:
                     assert cur.left is None
@@ -78,13 +78,21 @@ class TST:
                             else:
                                 raise AssertionError("fork node must have either left or right subnode!")
                     else:
-                        prev.mid = cur.right
+                        if prev_turn is LEFT:
+                            prev.left = cur.right
+                        elif prev_turn is RIGHT:
+                            assert False # TODO is this true?
+                            prev.right = cur.right
+                        else:
+                            prev.mid = cur.right
 
+                    self.size -= 1
                     return True
 
                 if is_fork:
                     turn = MID
 
+                prev_turn = MID
                 prev = cur
                 cur = cur.mid
                 i += 1
