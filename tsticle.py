@@ -19,6 +19,89 @@ class TST:
     def __len__(self):
         return self.size
 
+    def remove(self, word):
+        word += '\0'
+        last_fork = prev = cur = self.root
+        i = 0
+
+        LEFT = 1
+        MID = 2
+        RIGHT = 3
+
+        turn = None
+        while cur is not None:
+            is_fork = False
+
+            if cur.left is not None or cur.right is not None:
+                last_fork = cur
+                is_fork = True
+
+
+            if word[i] < cur.label:
+                prev = cur
+                cur = cur.left
+                turn = LEFT
+            elif word[i] > cur.label:
+                prev = cur
+                cur = cur.right
+                turn = RIGHT
+            else:
+                if i == len(word) - 1:
+                    assert cur.left is None
+                    if cur.right is None:
+                        if turn is None:
+                            self.root = None
+                        elif turn is LEFT:
+                            last_fork.left = None
+                        elif turn is RIGHT:
+                            last_fork.right = None
+                        else:
+                            assert turn is MID
+                            if last_fork.right is not None:
+                                last_fork.label = last_fork.right.label
+                                last_fork.mid = last_fork.right.mid
+
+                                cur = last_fork
+                                if cur.left is None:
+                                    cur.left = last_fork.right.left
+                                else:
+                                    cur = cur.left
+                                    while cur.right is not None:
+                                        cur = cur.right
+                                    cur.right = last_fork.right.left
+                                last_fork.right = None
+
+                            elif last_fork.left is not None:
+                                last_fork.label = last_fork.left.label
+                                last_fork.mid = last_fork.left.mid
+
+                                cur = last_fork
+                                if cur.right is None:
+                                    cur.right = last_fork.left.right
+                                else:
+                                    cur = cur.right
+                                    while cur.left is not None:
+                                        cur = cur.left
+                                    cur.left = last_fork.left.right
+                                last_fork.left = None
+
+                            else:
+                                raise AssertionError("fork node must have either left or right subnode!")
+                    else:
+                        prev.mid = cur.right
+
+                    return True
+
+                if is_fork:
+                    turn = MID
+
+                prev = cur
+                cur = cur.mid
+                i += 1
+
+        return False
+
+
     def find(self, word):
         word += '\0'
         cur = self.root
@@ -131,6 +214,9 @@ class CompressedTST:
 
     def __len__(self):
         return self.size
+
+    def remove(self, word):
+        raise NotImplementedError("Remove not implemented yet")
 
     def find(self, word):
         word += '\0'
@@ -277,18 +363,29 @@ class CompressedTST:
 
 
 if __name__ == "__main__":
-    #t = TST()
-    t = CompressedTST()
+    t = TST()
+    #t = CompressedTST()
 
     words = ["autobus", "auto", "a", "kokotko", "autobusak",
             "kkt", "kokot", "kk", "k",
             "karel", "kamil", "kure",
             "kral", "kralovec", "karlovec", "kokorin", "karlstejn"]
 
+    #words = ["autobus", "autor", "auto", "automat", "automaton", "authorka"]
+    words = ["auto", "automat", "automaton"]
+
     for w in words:
         t.insert(w)
         assert t.find(w)
 
+
+
+    print(t)
+    print()
+
+    #t.remove("auto")
+    #t.remove("automaton")
+    #t.remove("autobus")
 
     print(t)
     print()
