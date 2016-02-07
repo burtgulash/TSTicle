@@ -100,8 +100,7 @@ class TST:
         return False
 
 
-    def find(self, word):
-        word += '\0'
+    def _find(self, word):
         cur = self.root
         i = 0
 
@@ -117,6 +116,12 @@ class TST:
                 i += 1
 
         return False
+
+    def find(self, word):
+        return self._find(word + '\0')
+
+    def is_prefix(self, prefix):
+        return self._find(prefix)
 
     def descendants(self, prefix):
         def _d(tnode, acc):

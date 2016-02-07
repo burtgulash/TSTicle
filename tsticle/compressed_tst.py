@@ -20,6 +20,7 @@ class CompressedTST:
         while cur is not None:
             j = 0
             while j < len(cur.label) - 1:
+                # Out of bounds checking is done by END OF WORD sentinel
                 if word[i + j] != cur.label[j]:
                     return False
                 j += 1
@@ -31,6 +32,34 @@ class CompressedTST:
                 cur = cur.right
             else:
                 if i == len(word) - 1:
+                    return True
+                cur = cur.mid
+                i += 1
+
+        return False
+
+    def is_prefix(self, prefix):
+        cur = self.root
+        i = 0
+
+        while cur is not None:
+            j = 0
+            while j < len(cur.label) - 1:
+                # No sentinel - needs to bounds check
+                if i + j >= len(prefix) or prefix[i + j] != cur.label[j]:
+                    return False
+                j += 1
+
+            i += j
+            # ditto
+            if i >= len(prefix):
+                return False
+            if prefix[i] < cur.label[j]:
+                cur = cur.left
+            elif prefix[i] > cur.label[j]:
+                cur = cur.right
+            else:
+                if i == len(prefix) - 1:
                     return True
                 cur = cur.mid
                 i += 1
